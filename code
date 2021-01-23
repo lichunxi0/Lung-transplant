@@ -1,0 +1,77 @@
+#Join paired-end reads
+conda install fastq-join
+conda install fastp
+python join_paired_ends.py
+
+#Remove primer sequence
+#We used ACTCCTACGGGAGGCAGCA for 16S rRNA gene V3-V4 forward primers, and GGACTACHVGGGTWTCTAAT for 16S rRNA gene V3-V4 reverse primers
+
+cutadapt -g ACTCCTACGGGAGGCAGCA -a GGACTACHVGGGTWTCTAAT -e 0.15 -m 300 --discard-untrimmed merged0.fa -o nonprimer0.fa
+cutadapt -g ACTCCTACGGGAGGCAGCA -a GGACTACHVGGGTWTCTAAT -e 0.15 -m 300 --discard-untrimmed merged1.fa -o nonprimer1.fa
+cutadapt -g ACTCCTACGGGAGGCAGCA -a GGACTACHVGGGTWTCTAAT -e 0.15 -m 300 --discard-untrimmed merged2.fa -o nonprimer2.fa
+cutadapt -g ACTCCTACGGGAGGCAGCA -a GGACTACHVGGGTWTCTAAT -e 0.15 -m 300 --discard-untrimmed merged3.fa -o nonprimer3.fa
+cutadapt -g ACTCCTACGGGAGGCAGCA -a GGACTACHVGGGTWTCTAAT -e 0.15 -m 300 --discard-untrimmed merged4.fa -o nonprimer4.fa
+cutadapt -g ACTCCTACGGGAGGCAGCA -a GGACTACHVGGGTWTCTAAT -e 0.15 -m 300 --discard-untrimmed merged5.fa -o nonprimer5.fa
+cutadapt -g ACTCCTACGGGAGGCAGCA -a GGACTACHVGGGTWTCTAAT -e 0.15 -m 300 --discard-untrimmed merged6.fa -o nonprimer6.fa
+cutadapt -g ACTCCTACGGGAGGCAGCA -a GGACTACHVGGGTWTCTAAT -e 0.15 -m 300 --discard-untrimmed merged6.fa -o nonprimer6.fa
+cutadapt -g ACTCCTACGGGAGGCAGCA -a GGACTACHVGGGTWTCTAAT -e 0.15 -m 300 --discard-untrimmed merged7.fa -o nonprimer7.fa
+cutadapt -g ACTCCTACGGGAGGCAGCA -a GGACTACHVGGGTWTCTAAT -e 0.15 -m 300 --discard-untrimmed merged8.fa -o nonprimer8.fa
+cutadapt -g ACTCCTACGGGAGGCAGCA -a GGACTACHVGGGTWTCTAAT -e 0.15 -m 300 --discard-untrimmed merged9.fa -o nonprimer9.fa
+
+#Removal of chimerism
+wget http://drive5.com/uchime/rdp_gold.fa
+
+#Identify chimeric sequences
+identify_chimeric_seqs.py -m usearch61 -i nonprimer0.fa -r rdp_gold.fa -o nonchimera0
+identify_chimeric_seqs.py -m usearch61 -i nonprimer1.fa -r rdp_gold.fa -o nonchimera1
+identify_chimeric_seqs.py -m usearch61 -i nonprimer2.fa -r rdp_gold.fa -o nonchimera2
+identify_chimeric_seqs.py -m usearch61 -i nonprimer3.fa -r rdp_gold.fa -o nonchimera3
+identify_chimeric_seqs.py -m usearch61 -i nonprimer4.fa -r rdp_gold.fa -o nonchimera4
+identify_chimeric_seqs.py -m usearch61 -i nonprimer5.fa -r rdp_gold.fa -o nonchimera5
+identify_chimeric_seqs.py -m usearch61 -i nonprimer6.fa -r rdp_gold.fa -o nonchimera6
+identify_chimeric_seqs.py -m usearch61 -i nonprimer7.fa -r rdp_gold.fa -o nonchimera7
+identify_chimeric_seqs.py -m usearch61 -i nonprimer8.fa -r rdp_gold.fa -o nonchimera8
+identify_chimeric_seqs.py -m usearch61 -i nonprimer9.fa -r rdp_gold.fa -o nonchimera9
+
+#Filter chimeric sequences
+filter_fasta.py -f nonprimer0.fa -o nonchimera0.fa -s nonchimera0/chimeras.txt -n
+filter_fasta.py -f nonprimer1.fa -o nonchimera1.fa -s nonchimera1/chimeras.txt -n
+filter_fasta.py -f nonprimer2.fa -o nonchimera2.fa -s nonchimera2/chimeras.txt -n
+filter_fasta.py -f nonprimer3.fa -o nonchimera3.fa -s nonchimera3/chimeras.txt -n
+filter_fasta.py -f nonprimer4.fa -o nonchimera4.fa -s nonchimera4/chimeras.txt -n
+filter_fasta.py -f nonprimer5.fa -o nonchimera5.fa -s nonchimera5/chimeras.txt -n
+filter_fasta.py -f nonprimer6.fa -o nonchimera6.fa -s nonchimera6/chimeras.txt -n
+filter_fasta.py -f nonprimer7.fa -o nonchimera7.fa -s nonchimera7/chimeras.txt -n
+filter_fasta.py -f nonprimer8.fa -o nonchimera8.fa -s nonchimera8/chimeras.txt -n
+filter_fasta.py -f nonprimer9.fa -o nonchimera9.fa -s nonchimera9/chimeras.txt -n
+
+# Closed-reference OTU picking
+pick_closed_reference_otus.py -i nonchimera0.fa -r 97_otus.fasta -t 97_otu_taxonomy.txt -o pickotu0 -p closed_ref.parm.txt
+pick_closed_reference_otus.py -i nonchimera1.fa -r 97_otus.fasta -t 97_otu_taxonomy.txt -o pickotu1 -p closed_ref.parm.txt
+pick_closed_reference_otus.py -i nonchimera2.fa -r 97_otus.fasta -t 97_otu_taxonomy.txt -o pickotu2 -p closed_ref.parm.txt
+pick_closed_reference_otus.py -i nonchimera3.fa -r 97_otus.fasta -t 97_otu_taxonomy.txt -o pickotu0 -p closed_ref.parm.txt
+pick_closed_reference_otus.py -i nonchimera0.fa -r 97_otus.fasta -t 97_otu_taxonomy.txt -o pickotu0 -p closed_ref.parm.txt
+pick_closed_reference_otus.py -i nonchimera0.fa -r 97_otus.fasta -t 97_otu_taxonomy.txt -o pickotu0 -p closed_ref.parm.txt
+pick_closed_reference_otus.py -i nonchimera0.fa -r 97_otus.fasta -t 97_otu_taxonomy.txt -o pickotu0 -p closed_ref.parm.txt
+pick_closed_reference_otus.py -i nonchimera0.fa -r 97_otus.fasta -t 97_otu_taxonomy.txt -o pickotu0 -p closed_ref.parm.txt
+pick_closed_reference_otus.py -i nonchimera0.fa -r 97_otus.fasta -t 97_otu_taxonomy.txt -o pickotu0 -p closed_ref.parm.txt
+pick_closed_reference_otus.py -i nonchimera0.fa -r 97_otus.fasta -t 97_otu_taxonomy.txt -o pickotu0 -p closed_ref.parm.txt
+
+#merge the biom file
+merge_otu_tables.py -i otu_table1.biom,otu_table2.biom,otu_table3.biom,otu_table4.biom,otu_table5.biom,otu_table6.biom,otu_table7.biom,otu_table8.biom,otu_table9.biom,otu_table0.biom -o merge.biom
+
+#Counts/sample summary of biom file
+biom summarize-table -i merge.biom -o summary.txt
+#Standardize the reads to 13000 of biom file
+single_rarefaction.py -i merge.biom -o merge13000.biom -d 13000
+
+#biom convert
+biom convert -i merge13000.biom -o otu.txt --to-tsv --table-type "OTU table" --header-key taxonomy
+
+#adonis
+perl alpha_to_adonis.pl meta.txt merge13000.biom 97_otus.tree adonis
+
+#Random forest model
+perl RF.flow.pl -i microbiota.txt -o ROC -m meta.txt -f Group -t category -k 1
+
+#LEfSe analysis was determined by Galaxy (http://huttenhower.org/galaxy/)
