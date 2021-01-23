@@ -2,7 +2,7 @@ import csv
 import os
 from os import system
 
-sampleListFile = "samlpes.csv"
+sampleListFile = "samples.csv"
 
 rawDataPath = "./"
 resDir = "./res/"
